@@ -14,4 +14,10 @@ const notificationType = {
     noStock: 'No More Stock',
 };
 
-module.exports = { roles, notificationType };
+const eventMessageType =  {
+    create: 'Create',
+    edit: 'Edit',
+    delete: 'Delete',
+}
+
+module.exports = { roles, notificationType, eventMessageType };

@@ -3,14 +3,7 @@ const Product = db.product
 
 module.exports = class ProductRepository {
     async createProduct(productData) {
-        const product = await Product.create({
-            name: productData.name,
-            companyId: productData.companyId,
-            description: productData.description,
-            image: productData.image,
-            price: productData.price,
-            stock: productData.stock
-        });
+        const product = await Product.create(productData);
         return product
     }
 
