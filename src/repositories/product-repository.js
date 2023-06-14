@@ -2,8 +2,13 @@ const db = require('../db/connection/connection')
 const Product = db.product
 
 module.exports = class ProductRepository {
-    async createProduct(productData) {
-        const product = await Product.create(productData);
+    async upsertProduct(productData) {
+        const product = await Product.upsert(
+            productData,
+            {
+              returning: true 
+            }
+        );
         return product
     }
 

@@ -1,5 +1,5 @@
 require('dotenv').config({ path: `${__dirname}/.env.${process.env.NODE_ENV}` });
-const sqs = require('./snsService')
+const sqs = require('./sqsService')
 var logger = require("../logger/systemLogger");
 const UserRepository = require('../repositories/user-repository');
 const userRepository = new UserRepository();
@@ -24,8 +24,8 @@ const userCrationListener = async () => {
                                 if (messageGotten && messageGotten != undefined) {
                                     console.log("Message Gotten", messageGotten);
                                     let message = JSON.parse(messageGotten.Body);
-                                    let userToCreate = JSON.parse(message.Message);
-                                    await userRepository.createUser(userToCreate);
+                                    let userObject = JSON.parse(message.Message);
+                                    await userRepository.upsertUser(userObject);
         
                                     try {
                                         var deleteParams = {
