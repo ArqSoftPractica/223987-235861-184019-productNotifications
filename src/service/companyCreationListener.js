@@ -1,5 +1,5 @@
 require('dotenv').config({ path: `${__dirname}/.env.${process.env.NODE_ENV}` });
-const sqs = require('./snsService')
+const sqs = require('./sqsService')
 var logger = require("../logger/systemLogger");
 const CompanyRepository = require('../repositories/company-repository');
 const companyRepository = new CompanyRepository();
@@ -24,8 +24,8 @@ const companyCreationListener = async () => {
                                 if (messageGotten && messageGotten != undefined) {
                                     console.log("Message Gotten", messageGotten);
                                     let message = JSON.parse(messageGotten.Body);
-                                    let companyToCreate = JSON.parse(message.Message);
-                                    await companyRepository.createCompany(companyToCreate);
+                                    let companyObject = JSON.parse(message.Message);
+                                    await companyRepository.upsertCompany(companyObject);
         
                                     try {
                                         var deleteParams = {

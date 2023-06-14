@@ -1,5 +1,5 @@
 require('dotenv').config({ path: `${__dirname}/.env.${process.env.NODE_ENV}` });
-const sqs = require('./snsService')
+const sqs = require('./sqsService')
 var logger = require("../logger/systemLogger");
 const ProductRepository = require('../repositories/product-repository');
 const productRepository = new ProductRepository();
@@ -24,8 +24,8 @@ const productEventListener = async () => {
                                 if (messageGotten && messageGotten != undefined) {
                                     console.log("Message Gotten", messageGotten);
                                     let message = JSON.parse(messageGotten.Body);
-                                    let productToCreateOrEdit = JSON.parse(message.Message);
-                                    await productRepository.createProduct(productToCreateOrEdit);
+                                    let product = JSON.parse(message.Message);
+                                    await productRepository.upsertProduct(product);
         
                                     try {
                                         var deleteParams = {

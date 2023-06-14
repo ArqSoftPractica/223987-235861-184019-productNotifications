@@ -3,8 +3,13 @@ const crypto = require('crypto');
 const Company = db.company
 
 module.exports = class CompanyRepository {
-    async createCompany(companyToCreate) {
-        const company = await Company.create(companyToCreate);
+    async upsertCompany(companyToCreate) {
+        const company = await Company.upsert(
+            companyToCreate,
+            {
+              returning: true 
+            }
+        );
         return company;
     }
     

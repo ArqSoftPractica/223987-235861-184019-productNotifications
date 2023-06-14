@@ -3,8 +3,13 @@ const util = require('../util/util')
 const User = db.user
 
 module.exports = class UserRepository {
-    async createUser(userData) {
-        const user = await User.create(userData);
+    async upsertUser(userData) {
+        const user = await User.upsert(
+            userData,
+            {
+              returning: true 
+            }
+        );
         return user
     }
 
