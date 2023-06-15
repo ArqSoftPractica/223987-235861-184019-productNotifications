@@ -9,6 +9,7 @@ app.use(express.json());
 const dbconnection  = require('./src/db/connection/connection');
 const product = require('./src/routes/product');
 const health = require('./src/routes/health');
+const awsUpdate = require('./src/routes/awsUpdate');
 
 var productEventNotification = require("./src/service/product-event-notification");
 var companyEventListener = require("./src/service/companyCreationListener");
@@ -20,6 +21,7 @@ var logger = require("./src/logger/systemLogger")
 app.use(cors())
 app.use(product)
 app.use(health)
+app.use(awsUpdate)
 
 dbconnection.sequelize.sync()
   .then(() => {
