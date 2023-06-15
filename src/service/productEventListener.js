@@ -44,6 +44,7 @@ const productEventListener = async () => {
         }
     } catch (err) {
         logger.logError('Error Receiving Product QUEUE', err);
+        await new Promise(resolve => setTimeout(resolve, 300000));
     }
     productEventListener();
 }

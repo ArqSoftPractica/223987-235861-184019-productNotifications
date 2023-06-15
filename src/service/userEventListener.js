@@ -43,7 +43,8 @@ const userCrationListener = async () => {
                         });
         }
     } catch (err) {
-        logger.logError('Error Receiving Company QUEUE', err);
+        logger.logError('Error Receiving User QUEUE', err);
+        await new Promise(resolve => setTimeout(resolve, 300000));
     }
     userCrationListener();
 }
