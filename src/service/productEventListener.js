@@ -5,7 +5,7 @@ const ProductRepository = require('../repositories/product-repository');
 const productRepository = new ProductRepository();
 
 var queueURL = process.env.SQS_PRODUCT_QUEUE_URL;
-
+var productQueueServiceIsActive = { isActive: false };
 var params = {
     AttributeNames: ["SentTimestamp"],
     MaxNumberOfMessages: 10,
@@ -18,6 +18,7 @@ var params = {
 const productEventListener = async () => {
     try {
         const sqsResponse = await sqs.receiveMessage(params).promise()
+        productQueueServiceIsActive.isActive = true;
         if (sqsResponse && sqsResponse.Messages) {
             sqsResponse.Messages.forEach(async (messageGotten) => {
                             try {
@@ -35,18 +36,23 @@ const productEventListener = async () => {
                                         await sqs.deleteMessage(deleteParams).promise();
                                     } catch (err) {
                                         logger.logError('Error Deleting Message from Product QUEUE', err)
+                                        productQueueServiceIsActive.isActive = false;
+                                        await new Promise(resolve => setTimeout(resolve, 300000));
                                     }
                                 }
                             } catch (err) {
                                 logger.logError("Error creating Product In productNotification Service", err);
+                                productQueueServiceIsActive.isActive = false;
+                                await new Promise(resolve => setTimeout(resolve, 300000));
                             }
                         });
         }
     } catch (err) {
         logger.logError('Error Receiving Product QUEUE', err);
+        productQueueServiceIsActive.isActive = false;
         await new Promise(resolve => setTimeout(resolve, 300000));
     }
     productEventListener();
 }
 
-module.exports = productEventListener
+module.exports = { productEventListener, productQueueServiceIsActive }
