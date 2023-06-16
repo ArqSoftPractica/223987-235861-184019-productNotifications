@@ -12,9 +12,9 @@ const health = require('./src/routes/health');
 const awsUpdate = require('./src/routes/awsUpdate');
 
 var productEventNotification = require("./src/service/product-event-notification");
-var companyEventListener = require("./src/service/companyCreationListener");
-var userEventListener = require("./src/service/userEventListener");
-var productEventListener = require("./src/service/productEventListener");
+var { companyCreationListener } = require("./src/service/companyCreationListener");
+var { userQueueListener } = require("./src/service/userEventListener");
+var { productEventListener } = require("./src/service/productEventListener");
 
 var logger = require("./src/logger/systemLogger")
 
@@ -52,11 +52,11 @@ const server = app.listen(process.env.PORT ?? 3000, function(){
 })();
 
 (async() => {
-  companyEventListener();
+  companyCreationListener();
 })();
 
 (async() => {
-  userEventListener();
+  userQueueListener();
 })();
 
 (async() => {

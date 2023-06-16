@@ -15,9 +15,12 @@ var params = {
     WaitTimeSeconds: 0
 };
 
-const userCrationListener = async () => {
+var userQueueServiceIsActive = { isActive: false };
+
+const userQueueListener = async () => {
     try {
         const sqsResponse = await sqs.receiveMessage(params).promise()
+        userQueueServiceIsActive.isActive = true;
         if (sqsResponse && sqsResponse.Messages) {
             sqsResponse.Messages.forEach(async (messageGotten) => {
                             try {
@@ -35,18 +38,23 @@ const userCrationListener = async () => {
                                         await sqs.deleteMessage(deleteParams).promise();
                                     } catch (err) {
                                         logger.logError('Error Deleting Message from Company QUEUE', err)
+                                        userQueueServiceIsActive.isActive = false
+                                        await new Promise(resolve => setTimeout(resolve, 300000));
                                     }
                                 }
                             } catch (err) {
                                 logger.logError("Error creating company In Provider Service", err);
+                                userQueueServiceIsActive.isActive = false
+                                await new Promise(resolve => setTimeout(resolve, 300000));
                             }
                         });
         }
     } catch (err) {
         logger.logError('Error Receiving User QUEUE', err);
+        userQueueServiceIsActive.isActive = false
         await new Promise(resolve => setTimeout(resolve, 300000));
     }
-    userCrationListener();
+    userQueueListener();
 }
 
-module.exports = userCrationListener
+module.exports = { userQueueListener,  userQueueServiceIsActive }

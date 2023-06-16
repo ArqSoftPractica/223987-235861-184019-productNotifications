@@ -6,6 +6,8 @@ const companyRepository = new CompanyRepository();
 
 var queueURL = process.env.SQS_COMPANY_QUEUE_URL;
 
+var companyQueueServiceIsActive = {isActive: false};
+
 var params = {
     AttributeNames: ["SentTimestamp"],
     MaxNumberOfMessages: 10,
@@ -17,7 +19,8 @@ var params = {
 
 const companyCreationListener = async () => {
     try {
-        const sqsResponse = await sqs.receiveMessage(params).promise()
+        const sqsResponse = await sqs.receiveMessage(params).promise();
+        companyQueueServiceIsActive.isActive = true;
         if (sqsResponse && sqsResponse.Messages) {
             sqsResponse.Messages.forEach(async (messageGotten) => {
                             try {
@@ -35,18 +38,23 @@ const companyCreationListener = async () => {
                                         await sqs.deleteMessage(deleteParams).promise();
                                     } catch (err) {
                                         logger.logError('Error Deleting Message from Company QUEUE', err)
+                                        companyQueueServiceIsActive.isActive = false;
+                                        await new Promise(resolve => setTimeout(resolve, 300000));  
                                     }
                                 }
                             } catch (err) {
                                 logger.logError("Error creating company In Provider Service", err);
+                                companyQueueServiceIsActive.isActive = false;
+                                await new Promise(resolve => setTimeout(resolve, 300000));
                             }
                         });
         }
     } catch (err) {
         logger.logError('Error Receiving Company QUEUE', err);
+        companyQueueServiceIsActive.isActive = false;
         await new Promise(resolve => setTimeout(resolve, 300000));
     }
     companyCreationListener();
 }
 
-module.exports = companyCreationListener
+module.exports = { companyCreationListener, companyQueueServiceIsActive }
