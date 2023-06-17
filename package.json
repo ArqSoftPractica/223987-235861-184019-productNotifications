@@ -1,6 +1,6 @@
 {
   "name": "223987-235861-184019-back",
-  "version": "3.0.0",
+  "version": "3.0.5",
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test mocha --exit './tests/*.js'",
