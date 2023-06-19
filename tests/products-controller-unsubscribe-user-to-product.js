@@ -113,4 +113,12 @@ describe('Product Subscription Controller tests', () => {
         expect(res.json.args[0][0]).to.have.property('productSold');
         expect(res.json.args[0][0]).to.have.property('noStock');
     });  
+
+    it('should return an error for duplicate key', async () => {
+        upsertProductSubscriptionStub.rejects({ code: 11000, message: 'Database error', errors: [{ message: 'Duplicate key error' }] });
+        await productsController.upsertProductSubscription({ ...req, user: {id: null} }, res, next);
+        expect(next.args[0][0]).to.be.an.instanceOf(RestError);
+        expect(next.args[0][0].status).to.equal(409);
+        expect(next.args[0][0].message).to.equal('Duplicate key error');
+    });
 });
