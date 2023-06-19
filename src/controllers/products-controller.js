@@ -109,19 +109,6 @@ module.exports = class productController {
         }
     }
 
-    async unSubscribeUserToProduct(req, res, next) {
-        try {
-            const productId = req.params.id;
-            const userId = req.user.id;
-            await this.productSubscriptionRepository.deleteProductSubscription(productId, userId);
-            
-            res.status(204);
-            res.json();
-        } catch (err) {
-            this.handleRepoError(err, next)
-        }
-    }
-
     async handleRepoError(err, next) {
         //error de base de datos.
         let http_code = (err.code == 11000)?409:400;
