@@ -1,4 +1,4 @@
-## Arquitectura de software en la práctica - Backend - Obligatorio 1
+## Arquitectura de software en la práctica - Microservicio Product Notification - Obligatorio 2
 Docentes: Nicolás Fornaro y Guillermo Areosa
 
 Evelyn Jodus (223987), Hernán Reyes (235861), Michael Ellis (184019)
@@ -8,25 +8,27 @@ ________________________________________________________________________________
 
 ## Contenido de este Repositorio
 - [Introducción y funcionalidades](#IntroYFunc)
+- [Desarrollo y tecnologías utilziadas](#tecnologias)
 - [Requerimientos funcionales](#RF)
 - [Diagramas de vistas](#vistas)
-- [Docker Compose](#docker)
 - [Guía de despliegue](#despliegue)
-- [Desarrollo y tecnologías utilziadas](#tecnologias)
+
 
 
 ## 1. Introducción y funcionalidades <a name="IntroYFunc"></a>
 
-A lo largo de este repositorio se detallarán distintos aspectos importantes con lo que respecta al backend de esta aplicación.
+A lo largo de este repositorio se detallarán distintos aspectos importantes con lo que respecta al microservicio de ProductNotification que forma parte del backend de la aplicación que se nos solicitó desarrollar
 
 La aplicación que se nos solicitó desarrollar tiene como base el manejo de inventario para empresas. 
 El principal objetivo por el cual se crea es para lograr reducir errores humanos y mejorar la eficiencia en la gestión del inventario. 
 Basándonos, tanto en los requerimientos funcionales como en los no funcionales es que surge esta aplicación basada en roles. Más adelante en la documentación, detallaremos las distintas acciones capaces de realizar cada uno de los roles que se encuentran en nuestro sistema, pero adelantaremos que contaremos tanto con Administradores como con Empleados.
 
+Este microservicio es el que maneja todo lo relacionado con las suscripciones a productos. 
+
 ## 2. Desarrollo y tecnologías utilziadas  <a name="tecnologias"></a>
 ### Desarrollo
-Para esta primera versión. el equipo determinó tener una arquitectura monolítica cloud native por ser la más apropiada. 
-A continuación detallaremos las decisiones de tecnologías utilizadas: 
+En esta segunda versión. el equipo determinó tener una arquitectura basada en microservicios cloud native por ser la más apropiada. 
+A continuación detallaremos las decisiones de tecnologías utilizadas para este microservicio: 
 #### Backend
 El desarrollo del Backend fue realizado con NodeJS. 
 Motivos por los cuales se utilizó NodeJS: 
@@ -41,6 +43,7 @@ Más adelante en el Readme se tendrá acceso a la guia de despliegue utilizada
 
 ## 3. Requerimientos funcionales <a name="RF"></a>
 En la siguiente tabla se verán reflejados los distintos requerimientos funcionales solicitados, en conjunto con los actores correspondientes: 
+Tengamos en cuenta que todos estos requerimientos no se ven implementados en este microservicio, sino que en el conjunto de todos los microservicios de backend
 
 | **Requerimiento** | **Descripción** | **Actor** |
 |:---:|:---:|:---:|
@@ -59,6 +62,11 @@ En la siguiente tabla se verán reflejados los distintos requerimientos funciona
 | RF9 | Se permite visualizar una pantalla con las ventas realizadas para un cierto período | Usuario Administrador / Usuario Empleado |
 | RF10 | Disponibilización de un endpoint con los 3 productos más vendidos de forma histórica para una empresa | Endpoint público |
 | RF11 | Disponibilización de un endpoint que dado un periodo de tiempo, te devuelva todas las compras a un proveedor X en ese tiempo | Endpoint público |
+| RF12 | Permite la subscripción a producto desde un usuario | U. Administrador |
+| RF13 | Permite la de-subscripción a producto desde un usuario | U. Administrador |
+| RF14 | Permite realizar una venta programada  | U. Administrador / U. Empleado |
+| RF15 | Permite recibir reportes de la empresa a la que pertenece | U. Administrador / U. Empleado |
+| RF16 | Permite recibir notificaciones de productos que no tienen stock | U. Administrador |
 
 ## 4. Diagramas de vistas <a name="vistas"></a>
 Describiremos la arquitectura de nuestro sistema representados con las distintas vistas de arquitectura. Cada una de ellas nos provee de distintos detalles del sistema, así pudiendo llegar a lo que es el mismo en su completitud.
@@ -68,17 +76,23 @@ Las vistas de módulos se usan para presupuestar, estimar y asignar tareas y seg
 
 #### Vista de descomposición 
 En la vista de descomposición podemos describir la estructura jerárquica del sistema, partiendo del elemento de más alto nivel y documentando así de forma recursiva los elementos de la jerarquía.
-![image](https://user-images.githubusercontent.com/44271850/236256775-6f7fa9d8-bf8c-41ee-8323-21ee53ca80ad.png)
+![image](https://github.com/ArqSoftPractica/223987-235861-184019-productNotifications/assets/44271850/f8c4ea2b-8bda-40ab-9974-cbcd6ae54274)
+
 
 #### Vista de usos
 La siguiente vista describe las dependencias de usos entre los módulos del sistema
-![image](https://user-images.githubusercontent.com/44271850/236257050-0ca41699-1562-4f8e-8d7f-bcf6a8acf683.png)
+![image](https://github.com/ArqSoftPractica/223987-235861-184019-productNotifications/assets/44271850/1b72631c-8893-4a44-8109-60f7a9246247)
 
-## 5. Docker Compose <a name= "docker"></a>
+#### Vista de asignación y despliegue
+En esta sección describiremos los estilos que consideramos fundamentales para comunicar la forma como los elementos del software, principalmente cómo se relacionan los componentes con su entorno. En particular se describe la forma como los componentes se despliegan en los diferentes nodos físicos (servidores). Además de describir cómo se relacionan los módulos con el ambiente de desarrollo. Representamos los servicios como nodos, ya que son elementos físicos que existen en tiempo de ejecución y representan un recurso computacional, que poseen memoria y capacidad de procesamiento de los datos
 
-En el repositprio se podrá acceder al archivo docker-compose.yml. Gracias a este archivo, ejecutando únicamente el comando docker-compose up logramos levantar las bases de datos de MySQL, Redis y la aplicación de backend.
+![image](https://github.com/ArqSoftPractica/223987-235861-184019-productNotifications/assets/44271850/3507d1d0-56d3-452e-bc1f-a692457f6e84)
 
-## 6. Guia de despliegue <a name= "despliegue"></a>
+En este diagrama podemos ver los distintos microservicios y la forma en la cual estos se comunican con el cliente. 
+Para poder comunicar el frontend con los distintos microservicios hacemos uso de una API Gateway. En este caso, el frontend le hace la request a la API Gateway y luego la misma la redirige al microservicio que corresponda.
+
+
+## 5. Guia de despliegue <a name= "despliegue"></a>
 ### Guia para crear un deploy desde cero 
 
 **Paso 1:** Se debe comprimir todo el contenido de la carpeta del proyecto a un archivo .zip. 
