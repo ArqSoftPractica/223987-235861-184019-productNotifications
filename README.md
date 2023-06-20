@@ -86,7 +86,7 @@ La siguiente vista describe las dependencias de usos entre los módulos del sist
 #### Vista de asignación y despliegue
 En esta sección describiremos los estilos que consideramos fundamentales para comunicar la forma como los elementos del software, principalmente cómo se relacionan los componentes con su entorno. En particular se describe la forma como los componentes se despliegan en los diferentes nodos físicos (servidores). Además de describir cómo se relacionan los módulos con el ambiente de desarrollo. Representamos los servicios como nodos, ya que son elementos físicos que existen en tiempo de ejecución y representan un recurso computacional, que poseen memoria y capacidad de procesamiento de los datos
 
-![image](https://github.com/ArqSoftPractica/223987-235861-184019-productNotifications/assets/44271850/3507d1d0-56d3-452e-bc1f-a692457f6e84)
+![Diagramas de vistas-Despliegue OBL2 drawio (1)](https://github.com/ArqSoftPractica/223987-235861-184019-productNotifications/assets/44271850/751ac33d-8815-4348-82c6-bd0af52f2fba)
 
 En este diagrama podemos ver los distintos microservicios y la forma en la cual estos se comunican con el cliente. 
 Para poder comunicar el frontend con los distintos microservicios hacemos uso de una API Gateway. En este caso, el frontend le hace la request a la API Gateway y luego la misma la redirige al microservicio que corresponda.
