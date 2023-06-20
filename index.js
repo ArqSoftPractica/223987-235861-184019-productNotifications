@@ -7,31 +7,21 @@ require('dotenv').config({ path: `${__dirname}/.env.${process.env.NODE_ENV}` });
 
 app.use(express.json());
 const dbconnection  = require('./src/db/connection/connection');
-const user = require('./src/routes/user');
-const company = require('./src/routes/company');
-const provider = require('./src/routes/provider');
 const product = require('./src/routes/product');
-const sale = require('./src/routes/sale');
-const salesReport = require('./src/routes/saleReport');
-const purchase = require('./src/routes/purchase');
 const health = require('./src/routes/health');
-const reports = require('./src/routes/reports');
+const awsUpdate = require('./src/routes/awsUpdate');
 
-var salesReportQueue = require("./src/service/sales-bull-queue-service");
 var productEventNotification = require("./src/service/product-event-notification");
+var { companyCreationListener } = require("./src/service/companyCreationListener");
+var { userQueueListener } = require("./src/service/userEventListener");
+var { productEventListener } = require("./src/service/productEventListener");
 
 var logger = require("./src/logger/systemLogger")
 
 app.use(cors())
-app.use(user)
-app.use(company)
-app.use(provider)
 app.use(product)
-app.use(purchase)
-app.use(sale)
-app.use(salesReport)
 app.use(health)
-app.use(reports)
+app.use(awsUpdate)
 
 dbconnection.sequelize.sync()
   .then(() => {
@@ -58,11 +48,19 @@ const server = app.listen(process.env.PORT ?? 3000, function(){
 });
 
 (async() => {
-  await salesReportQueue.initSalesReportQueue();
+  await productEventNotification.initProductEventNotification();
 })();
 
 (async() => {
-  await productEventNotification.initProductEventNotification();
+  companyCreationListener();
+})();
+
+(async() => {
+  userQueueListener();
+})();
+
+(async() => {
+  productEventListener();
 })();
 
 module.exports = server;

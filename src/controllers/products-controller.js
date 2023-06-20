@@ -102,21 +102,8 @@ module.exports = class productController {
             const productId = req.params.id;
             const userId = req.user.id;
             const productSubscription = await this.productSubscriptionRepository.getProductSubscription(productId, userId);
-            res.status(productSubscription);
-            return res.json();
-        } catch (err) {
-            this.handleRepoError(err, next)
-        }
-    }
-
-    async unSubscribeUserToProduct(req, res, next) {
-        try {
-            const productId = req.params.id;
-            const userId = req.user.id;
-            await this.productSubscriptionRepository.deleteProductSubscription(productId, userId);
-            
-            res.status(204);
-            res.json();
+            res.status(productSubscription ? 200 : 204);
+            return res.json(productSubscription);
         } catch (err) {
             this.handleRepoError(err, next)
         }
